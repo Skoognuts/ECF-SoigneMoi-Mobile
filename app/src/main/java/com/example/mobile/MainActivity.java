@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.view.KeyEvent;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -27,23 +28,29 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Chargement...");
         progressDialog.show();
 
+        //webView.setWebChromeClient(new WebChromeClient());
         webView = findViewById(R.id.webView);
         webView.canGoBackOrForward(99);
         webView.setWebViewClient(new myWebViewClient());
 
         WebSettings settings = webView.getSettings();
-        // settings.setJavaScriptEnabled(true);
+        settings.setJavaScriptEnabled(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
+        //settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+
         webView.loadUrl("https://" + myWebSite);
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        if (webView.canGoBack()) {
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
             webView.goBack();
-        } else {
-            finish();
+            return true;
         }
+        return super.onKeyDown(keyCode, event);
     }
 
     class myWebViewClient extends android.webkit.WebViewClient {
